@@ -61,7 +61,7 @@ jobs:
       if: always()
       uses: actions/upload-artifact@v3
       with:
-        name: coverage-${{ github.sha }}
+        name: unit-test-coverage-${{ github.sha }}
         path: src/coverage/coverage-final.json
 
   integration-tests:
@@ -88,6 +88,16 @@ jobs:
         exit 1
     - name: Clean database
       run: docker-compose down
+    - name: Integration test artifact upload
+      uses: actions/upload-artifact@v3
+      with:
+        name: integration-test-${{ github.sha }}
+        path: src/reports/report.xml
+    - name: Coverage check artifact upload
+      uses: actions/upload-artifact@v3
+      with:
+        name: integration-coverage-${{ github.sha }}
+        path: src/coverage/coverage-final.json
 
   e2e-tests:
     needs: [lint-tests, unit-tests, integration-tests]
