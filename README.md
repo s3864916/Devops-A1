@@ -1,29 +1,20 @@
 # COSC2759 Assignment 1
 ## Notes App - CI Pipeline
-- Full Name: **FILL IN**
-- Student ID: **FILL IN**
-
-### Guidance (remove this section before final submission)
-
-1. Refer for assignment specification `Marking Guide` for details of what should appear in this README.
-
-1. If you do not see an `Actions` tab in your GitHub, email patrick.conheady@rmit.edu.au with URL to your repository, so that it can be enabled.
-
-1. Implement your CI pipeline in the directory `.github/workflows`.
-
-1. Refer to [src/README.md](/src/README.md) for important details on building and testing the application.
-
-1. Commit images to the `img` directory and add them like 
-    ```html
-    <img src="/img/md.png" style="height: 70px;"/>
-    ```
-    <img src="/img/md.png" style="height: 70px;"/>
+- Full Name: **Yung-En Chi**
+- Student ID: **s3864916**
 
 
-## 1. Heading
-### 1.1 Subheading 
-### 1.2 Subheading 
+## 1. Analysis of the problem
+### 1.1 Deliver new features with potential bug or error
+##### Currently, the code is developed and tested manually by the development team, which could potentially introduce errors that were not fully tested. This has resulted in instances where publishing a buggy code has caused an increase in workload for both the support service team and development teams.
 
-## 2. Heading
-### 2.1 Subheading 
-### 2.2 Subheading 
+### 1.2 Mannully built and deployed
+##### Currently, the build and deployment for the application is done manually from the lead developer's laptop, which is inefficient for build and deployment. By the approach, There has been an instance where, due to the leave of the lead developer, Alpine Inc missed a critical release containing a new feature for one of their largest clients.
+
+
+## 2. Explain and justify the solution
+### 2.1 Solution approach: CI Pipeline
+##### To address the issues outlined in the problem analysis, the proposed solution is to establish a Continuous Integration (CI) pipeline. This will reduce the dependency on manual processes, introduce automated builds, and automate the testing processes. By implementing a CI pipeline, the strain on the QA team will be reduced, and any bugs or development defects will be picked up quickly and fed back to developers to be resolved before any changes are promoted to production.
+### 2.2 Explain of CI Pipline process
+###### Our proposed CI pipeline consists of six phases: linting, unit testing, SAST (Static Application Security Testing), integration testing, end-to-end (e2e) testing, and packaging.
+(More To add)
