@@ -4,6 +4,7 @@ name: Notes Application CI Pipeline
 on:
   push:
     branches:
+      - main
       - "feature/*"
   pull_request:
     branches:
@@ -14,9 +15,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Setup Node.js
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         with:
           node-version: "17.6.0"
       - name: Install dependencies
@@ -31,10 +32,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout code
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
 
     - name: Setup Node.js
-      uses: actions/setup-node@v2
+      uses: actions/setup-node@v3
       with:
         node-version: "17.6.0"
 
@@ -45,27 +46,36 @@ jobs:
       run: npm run test-unit --prefix src
 
     - name: Unit-test artifact upload
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
         name: unit-test-${{ github.sha }}
         path: src/reports/report.xml
 
     - name: Coverage check artifact upload
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
         name: coverage-${{ github.sha }}
         path: src/coverage/coverage-final.json
 
+  check-branch:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Print GitHub info
+      run: |
+        echo ${{ github }}
+        echo ${{ github.ref }}
+        echo ${{ github.event_name }}
+        echo ${{ github.base_ref }}
+
   deploy:
-    if: github.ref == 'refs/heads/main'
     needs: [lint, unit-tests]
     runs-on: ubuntu-latest
     steps:
     - name: Checkout code
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
 
     - name: Setup Node.js
-      uses: actions/setup-node@v2
+      uses: actions/setup-node@v3
       with:
         node-version: "17.6.0"
 
@@ -76,8 +86,8 @@ jobs:
       run: npm run build --prefix src
 
     - name: Deploy artifact upload in condition # if fail then don't generate the artifact
-      if: success()
-      uses: actions/upload-artifact@v2
+      if: (success() && github.ref == 'refs/heads/main') || (github.event_name == 'pull_request' && github.base_ref == 'main')
+      uses: actions/upload-artifact@v3
       with:
-        name: coverage-${{ github.sha }}
-        path: src/coverage/coverage-final.json
+        name: deploy-${{ github.sha }}
+        path: src/notes-1.0.0.tgz
