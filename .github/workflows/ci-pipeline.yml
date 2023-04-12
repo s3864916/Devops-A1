@@ -4,8 +4,7 @@ name: Notes Application CI Pipeline
 on:
   push:
     branches:
-      - feature/lint
-      - feature/unit-testing
+      - feature/*
   pull_request:
     branches:
       - main
@@ -28,23 +27,32 @@ jobs:
         run: npm run test-lint --prefix src
   
   unit-tests:
-  needs: lint
+    # needs: lint
     runs-on: ubuntu-latest
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
+
     - name: Setup Node.js
       uses: actions/setup-node@v2
       with:
-        node-version: "17.6.0"  
+        node-version: "17.6.0"
+
     - name: Install dependencies
       run: npm clean-install --prefix src
+
     - name: Run unit tests
       run: npm run test-unit --prefix src
-    - name: Artifact upload condition
-      if: success() || failure()
+
+    - name: Unit-test artifact upload condition
       uses: actions/upload-artifact@v2
       with:
         name: unit-test-${{ github.sha }}
         path: src/reports/report.xml
+
+    - name: Coverage check artifact upload condition
+      uses: actions/upload-artifact@v2
+      with:
+        name: coverage-${{ github.sha }}
+        path: src/coverage/coverage-final.json
 

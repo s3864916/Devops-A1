@@ -2,6 +2,7 @@ node_modules/
 test-results/
 playwright-report/
 reports/
+coverage/
 
 coverage/
 junit.xml
