@@ -14,7 +14,7 @@ jobs:
   lint:
     # if: false # For efficency at dev phase
     runs-on: ubuntu-latest
-    steps:
+    steps:        
       - name: Checkout code
         uses: actions/checkout@v3
       - name: Setup Node.js
@@ -25,6 +25,11 @@ jobs:
         run: npm clean-install --prefix src
       - name: Run linter
         run: npm run test-lint --prefix src
+      - name: Break on failure 
+        if: failure()
+        run: |
+          echo "Lint tests failed, break the pipline now."
+          exit 1
   
   unit-tests:
     # if: false # For efficency at dev phase
@@ -41,6 +46,11 @@ jobs:
       run: npm clean-install --prefix src
     - name: Run unit tests
       run: npm run test-unit --prefix src
+    - name: Break on failure 
+      if: failure()
+      run: |
+        echo "Unit-tests tests failed, break the pipline now."
+        exit 1
     - name: Unit-test artifact upload
       uses: actions/upload-artifact@v3
       with:
@@ -73,7 +83,7 @@ jobs:
       run: |
         echo "Integration tests failed, see log below:"
         npm run test-integration --prefix src > cat
-        exit
+        exit 1
     - name: Clean database
       run: docker-compose down
 
