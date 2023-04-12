@@ -12,6 +12,7 @@ on:
 
 jobs:
   lint:
+    # if: false # For efficency at dev phase
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -22,70 +23,76 @@ jobs:
           node-version: "17.6.0"
       - name: Install dependencies
         run: npm clean-install --prefix src
-      - name: List out packages
-        run: npm list --prefix src
       - name: Run linter
         run: npm run test-lint --prefix src
   
   unit-tests:
-    # needs: lint
+    # if: false # For efficency at dev phase
+    needs: lint
     runs-on: ubuntu-latest
     steps:
     - name: Checkout code
       uses: actions/checkout@v3
-
     - name: Setup Node.js
       uses: actions/setup-node@v3
       with:
         node-version: "17.6.0"
-
     - name: Install dependencies
       run: npm clean-install --prefix src
-
     - name: Run unit tests
       run: npm run test-unit --prefix src
-
     - name: Unit-test artifact upload
       uses: actions/upload-artifact@v3
       with:
         name: unit-test-${{ github.sha }}
         path: src/reports/report.xml
-
     - name: Coverage check artifact upload
       uses: actions/upload-artifact@v3
       with:
         name: coverage-${{ github.sha }}
         path: src/coverage/coverage-final.json
 
-  check-branch:
-    runs-on: ubuntu-latest
-    steps:
-    - name: Print GitHub info
-      run: |
-        echo ${{ github }}
-        echo ${{ github.ref }}
-        echo ${{ github.event_name }}
-        echo ${{ github.base_ref }}
-
-  deploy:
+  integration-tests:
     needs: [lint, unit-tests]
     runs-on: ubuntu-latest
     steps:
     - name: Checkout code
       uses: actions/checkout@v3
-
     - name: Setup Node.js
       uses: actions/setup-node@v3
       with:
         node-version: "17.6.0"
-
     - name: Install dependencies
       run: npm clean-install --prefix src
-    
+    - name: Run database
+      run: docker-compose up -d
+    - name: Run integration test
+      run: npm run test-integration --prefix src
+    - name: Break and log on failure 
+      if: failure()
+      run: |
+        echo "Integration tests failed, see log below:"
+        npm run test-integration --prefix src > cat
+        exit
+    - name: Clean database
+      run: docker-compose down
+
+  deploy:
+    # if: false # For efficency at dev phase
+    needs: [lint, unit-tests, integration-tests]
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: "17.6.0"
+    - name: Install dependencies
+      run: npm clean-install --prefix src
     - name: Build deploy file
       run: npm run build --prefix src
-
-    - name: Deploy artifact upload in condition # if fail then don't generate the artifact
+    - name: Deploy artifact upload in condition # Only when success or push to main(which not gonna happen generally)
       if: (success() && github.ref == 'refs/heads/main') || (github.event_name == 'pull_request' && github.base_ref == 'main')
       uses: actions/upload-artifact@v3
       with:

@@ -1,0 +1,15 @@
+
+> notes@1.0.0 test-integration
+> jest --ci tests/integration --coverage --forceExit
+
+  console.log
+    Server Has Started
+
+      at Server.<anonymous> (app.js:26:11)
+
+----------|---------|----------|---------|---------|-------------------
+File      | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+----------|---------|----------|---------|---------|-------------------
+All files |     100 |      100 |     100 |     100 |                   
+ note.js  |     100 |      100 |     100 |     100 |                   
+----------|---------|----------|---------|---------|-------------------
