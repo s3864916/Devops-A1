@@ -1,7 +1,6 @@
 const app = require('../../app')
 const supertest = require('supertest')
 const req = supertest(app)
-const Note = require("../../models/note")
 
 // Integration Tests programmatically test the API used by the application
 

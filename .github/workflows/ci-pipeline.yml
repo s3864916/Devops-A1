@@ -1,4 +1,28 @@
 name: Notes Application CI Pipeline
-# create a CI pipeline based on the assignment specification
-# remember to commit often
+
+
+on:
+  push:
+    branches:
+      - feature/lint
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: "17.6.0"
+      - name: Install dependencies
+        run: npm clean-install --prefix src
+      - name: List out packages
+        run: npm list --prefix src
+      - name: Run linter
+        run: npm run test-lint --prefix src
 

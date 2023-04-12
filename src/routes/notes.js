@@ -12,7 +12,7 @@ router.post('/', async (req, res) => {
     description: req.body.description,
   });
   try {
-    note = await note.save();
+    await note.save();
     res.redirect('/');
   } catch (e) {
     console.log(e);
