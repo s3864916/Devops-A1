@@ -11,7 +11,7 @@ on:
       - main
 
 jobs:
-  lint:
+  lint-tests:
     # if: false # For efficency at dev phase
     runs-on: ubuntu-latest
     steps:        
@@ -33,7 +33,7 @@ jobs:
   
   unit-tests:
     # if: false # For efficency at dev phase
-    needs: lint
+    needs: lint-tests
     runs-on: ubuntu-latest
     steps:
     - name: Checkout code
@@ -52,18 +52,20 @@ jobs:
         echo "Unit-tests tests failed, break the pipline now."
         exit 1
     - name: Unit-test artifact upload
+      if: always()
       uses: actions/upload-artifact@v3
       with:
         name: unit-test-${{ github.sha }}
         path: src/reports/report.xml
     - name: Coverage check artifact upload
+      if: always()
       uses: actions/upload-artifact@v3
       with:
         name: coverage-${{ github.sha }}
         path: src/coverage/coverage-final.json
 
   integration-tests:
-    needs: [lint, unit-tests]
+    needs: [lint-tests, unit-tests]
     runs-on: ubuntu-latest
     steps:
     - name: Checkout code
@@ -87,9 +89,47 @@ jobs:
     - name: Clean database
       run: docker-compose down
 
+  e2e-tests:
+    needs: [lint-tests, unit-tests, integration-tests]
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: "17.6.0"
+    - name: Install dependencies
+      run: npm clean-install --prefix src
+    - name: Install Playwright Browsers
+      run: npm run install-e2e --prefix src
+    - name: Run database
+      run: docker-compose up -d
+    - name: Run app
+      run: npm run start-background --prefix src
+    - name: Run Playwright tests
+      run: npm run test-e2e --prefix src
+    - name: Break and log on failure 
+      if: failure()
+      run: |
+        echo "E2e tests failed, see log below:"
+        npm run test-e2e --prefix src
+        exit 1
+    - name: Clean app
+      run: npm run clean-background --prefix src
+    - name: Clean database
+      run: docker-compose down
+    - name: E2E artifact upload
+      if: always()
+      uses: actions/upload-artifact@v3
+      with:
+        name: playwright-report-${{ github.sha }}
+        path: src/playwright-report/index.html
+
   deploy:
     # if: false # For efficency at dev phase
-    needs: [lint, unit-tests, integration-tests]
+    needs: [lint-tests, unit-tests, integration-tests, e2e-tests]
     runs-on: ubuntu-latest
     steps:
     - name: Checkout code

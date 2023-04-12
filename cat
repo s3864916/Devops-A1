@@ -1,0 +1,71 @@
+
+> notes@1.0.0 test-e2e
+> npx playwright test
+
+
+[2mRunning [22m3[2m tests using [22m2[2m workers[22m
+
+[1A[2K[1/3] [firefox] › newnote.spec.ts:3:5 › test
+[1A[2K[2/3] [chromium] › newnote.spec.ts:3:5 › test
+[1A[2K[31m  1) [chromium] › newnote.spec.ts:3:5 › test [2m───────────────────────────────────────────────────────[22m[39m
+
+    Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3000/
+    =========================== logs ===========================
+    navigating to "http://localhost:3000/", waiting until "load"
+    ============================================================
+
+      4 |
+      5 |   // Go to http://localhost:3000/
+    > 6 |   await page.goto('http://localhost:3000/');
+        |              ^
+      7 |
+      8 |   // Click text=New Note
+      9 |   await page.locator('text=New Note').click();
+
+    [2m    at /home/ubuntu/cosc2759-assignment-1-s3864916/src/tests/e2e/newnote.spec.ts:6:14[22m
+
+
+[1A[2K[3/3] [webkit] › newnote.spec.ts:3:5 › test
+[1A[2K[31m  2) [webkit] › newnote.spec.ts:3:5 › test [2m─────────────────────────────────────────────────────────[22m[39m
+
+    Error: page.goto: Could not connect: Connection refused
+    =========================== logs ===========================
+    navigating to "http://localhost:3000/", waiting until "load"
+    ============================================================
+
+      4 |
+      5 |   // Go to http://localhost:3000/
+    > 6 |   await page.goto('http://localhost:3000/');
+        |              ^
+      7 |
+      8 |   // Click text=New Note
+      9 |   await page.locator('text=New Note').click();
+
+    [2m    at /home/ubuntu/cosc2759-assignment-1-s3864916/src/tests/e2e/newnote.spec.ts:6:14[22m
+
+
+[1A[2K[31m  3) [firefox] › newnote.spec.ts:3:5 › test [2m────────────────────────────────────────────────────────[22m[39m
+
+    Error: page.goto: NS_ERROR_CONNECTION_REFUSED
+    =========================== logs ===========================
+    navigating to "http://localhost:3000/", waiting until "load"
+    ============================================================
+
+      4 |
+      5 |   // Go to http://localhost:3000/
+    > 6 |   await page.goto('http://localhost:3000/');
+        |              ^
+      7 |
+      8 |   // Click text=New Note
+      9 |   await page.locator('text=New Note').click();
+
+    [2m    at /home/ubuntu/cosc2759-assignment-1-s3864916/src/tests/e2e/newnote.spec.ts:6:14[22m
+
+
+[1A[2K[31m  3 failed[39m
+[31m    [chromium] › newnote.spec.ts:3:5 › test [2m────────────────────────────────────────────────────────[22m[39m
+[31m    [firefox] › newnote.spec.ts:3:5 › test [2m─────────────────────────────────────────────────────────[22m[39m
+[31m    [webkit] › newnote.spec.ts:3:5 › test [2m──────────────────────────────────────────────────────────[22m[39m
+
+[36m  Serving HTML report at http://localhost:9323. Press Ctrl+C to quit.[39m
+Failed to open browser on http://localhost:9323

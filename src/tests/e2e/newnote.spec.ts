@@ -28,5 +28,4 @@ test('test', async ({ page }) => {
   // Click text=Delete
   await page.locator('text=Delete').click();
   await expect(page).toHaveURL('http://localhost:3000/');
-
 });
