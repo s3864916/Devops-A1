@@ -5,14 +5,13 @@ on:
   push:
     branches:
       - main
-      - "feature/*"
+      - '**'
   pull_request:
     branches:
       - main
 
 jobs:
   lint-tests:
-    # if: false # For efficency at dev phase
     runs-on: ubuntu-latest
     steps:        
       - name: Checkout code
@@ -32,7 +31,6 @@ jobs:
           exit 1
   
   unit-tests:
-    # if: false # For efficency at dev phase
     needs: lint-tests
     runs-on: ubuntu-latest
     steps:
@@ -138,7 +136,6 @@ jobs:
         path: src/playwright-report/index.html
 
   deploy:
-    # if: false # For efficency at dev phase
     needs: [lint-tests, unit-tests, integration-tests, e2e-tests]
     runs-on: ubuntu-latest
     steps:
